@@ -1,0 +1,93 @@
+Encapsulation:
+
+Wrapping variables and methods together, hiding the variables by declaring as private and providing public getter and setters to
+modify the data.
+
+Private data only accesible within the class it's self, however the public methods can be accessed from outside the class to call or
+modify the data.
+
+Example:
+
+private int amount;
+
+public int getAmount() {
+	return amount;
+}
+	
+public void setAmount(int amount) {
+	this.amount = amount;
+}
+
+The variable amount is private so cannot be accessed other than within the class.
+
+The getAmount returns the integer amount and is public to allow for access from outside the class.
+The setAmount allows for the integer to be set to a value.
+
+
+Inheritance:
+
+Aquiring the properties, such as variables and methods from another class by extending the superclass (main class). The inheriting class is known as the subclass.
+
+Example:
+
+class Ticket {
+	
+}
+
+class StandardTicket extends Ticket {
+	
+}
+
+The StandardTicket class would inherit methods/variables from the StandardTicket class, for example the ticket price variable which value would be unique to the standard ticket but used by all tickets.
+
+
+Polymorphism:
+
+The ability for an object to take on many forms.
+
+An object which can pass the IS-A test is to be considered polymorphic, such as a car IS-A vehicle.
+
+Example:
+
+public interface Vegetarian{}
+public class Animal{}
+public class Deer extends Animal implements Vegetarian{}
+
+Deer d = new Deer();
+Animal a = d;
+Vegetarian v = d;
+Object o = d;
+
+(https://www.tutorialspoint.com/java/java_polymorphism.htm)
+
+A borrowed example but very easy to explain, the animal class is the main superclass.
+The Deer would extend from the Animal class because a Deer IS-A animal.
+The Deer is also a vegetarian so it can implement the interface and a Deer is also an object.
+
+Making the Deer class polymorphic because it can be classed as many different objects, including an animal, an object or simply a deer.
+
+
+Abstraction:
+
+Abstraction is considered as dealing with ideas rather than execution/events.
+Where you would define the abstract method and the inheriting class would define the execution.
+Abstract classes can be considered a frame for a future class.
+Any class inheriting the class must either override the abstract method or declare itself as abstract.
+
+Example:
+
+public abstract Employee {
+	
+	private String name;
+
+	public abstract double computePay();
+}
+
+public class Salary extends Employee {
+	
+	private double salary;
+
+	public abstract double computePay() {
+		return salary/52;
+	}
+}
