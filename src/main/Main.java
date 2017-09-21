@@ -14,6 +14,8 @@ import tickets.Ticket;
 public class Main {
 	
 	private static String[] days = { "mon", "monday", "tues", "tuesday", "wed", "wednesday", "thurs", "thursday", "fri", "friday", "sat", "saturday", "sun", "sunday" };
+	private static String[] ticketTypes = { "standard", "student", "oap", "child" };
+	
 	private static ArrayList<Ticket> tickets = new ArrayList<Ticket>();
 	
 	public static ArrayList<Ticket> getTickets() {
@@ -22,6 +24,10 @@ public class Main {
 	
 	public static String[] getDays() {
 		return days;
+	}
+	
+	public static String[] getTicketTypes() {
+		return ticketTypes;
 	}
 	
 	private static boolean discount = false;
@@ -41,25 +47,55 @@ public class Main {
 	public static void main(String[] args) {
 		
 		boolean stillOrdering = true;
+    	String currentTicketsString = "Current Tickets: ";
 		
 		try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-            
-            System.out.print("What day would you like to purchase tickets for?\n");
-            String day = reader.readLine();
-            
-            if (day.equalsIgnoreCase(getDays()[4]) || day.equalsIgnoreCase(getDays()[5])) {
-        	   setDiscount(true);
+
+            boolean validDay = false;
+            while (!validDay) {
+	            System.out.print("What day would you like to purchase tickets for?\n");
+	            String day = reader.readLine();
+	            
+	            for (int i = 0; i < getDays().length; i++) {
+	            	if (day.equalsIgnoreCase(getDays()[i])) {
+	            		validDay = true;
+	            	}
+	            }
+	            
+	            if (day.equalsIgnoreCase(getDays()[4]) || day.equalsIgnoreCase(getDays()[5])) {
+	         	   setDiscount(true);
+	            }
+	            
+	            if (validDay)
+	            	System.out.println("Your chosen day is: " + day + ", you are " + (hasDiscount() == true ? "valid" : "not valid") + " for discounted prices."); 
+	            else 
+	            	System.out.println("You've not chosen a valid day, please enter a valid day: (Example 'Mon'/'Monday')");
             }
-            System.out.println("Your chosen day is: " + day + ", you are " + (hasDiscount() == true ? "valid" : "not valid") + " for discounted prices.");
-            
+           
             while (stillOrdering) {
-            	if (hasDiscount())
-            		System.out.println("What ticket would you like? (Discounted)(Standard £6, Student £4, OAP £4, Child £2) \n");
-            	else 
-            		System.out.println("What ticket would you like? (Standard £8, Student £6, OAP £6, Child £4) \n");
-         
-            	String ticketType = reader.readLine();
+            	
+            	boolean validTicket = false;
+            	String ticketType = "";
+            	
+            	while (!validTicket) {
+	            	if (hasDiscount())
+	            		System.out.println("What ticket would you like? (Discounted)(Standard £6, Student £4, OAP £4, Child £2) \n");
+	            	else 
+	            		System.out.println("What ticket would you like? (Standard £8, Student £6, OAP £6, Child £4) \n");
+	         
+	            	ticketType = reader.readLine();
+	            	for (int i = 0; i < getTicketTypes().length; i++) {
+		            	if (ticketType.equalsIgnoreCase(getTicketTypes()[i])) {
+		            		validTicket = true;
+		            	}
+		            }
+	            	
+	            	if (!validTicket)
+	            		System.out.println("That is not a valid ticket type, please try again.");
+            	}
+            	
+            	
             	System.out.println("How many would you like?");
             	int ticketAmount = Integer.parseInt(reader.readLine());
             	
@@ -89,6 +125,7 @@ public class Main {
 	                		currentInstanceTicket.setAmount(currentInstanceTicket.getAmount() + ticketAmount);
 	                		getTickets().set(i, currentInstanceTicket);
 	                		none = false;
+	                		System.out.println("here");
 	                		break;
 	                	}
 	            	}	
@@ -96,14 +133,18 @@ public class Main {
             		ticket.setAmount(ticketAmount);
             		getTickets().add(ticket);
             		none = false;
+            		System.out.println("here2");
             	}
             	
             	if (none) {
             		ticket.setAmount(ticketAmount);
             		getTickets().add(ticket);
+            		System.out.println("here3");
             	}
             	
-            	String currentTicketsString = "Current Tickets: ";
+            	System.out.println(getTickets().toString());
+            	
+            	String localTicketString = "Current Tickets: ";
             	for (int i = 0; i < getTickets().size(); i++) {
             		String currentTicketType = getTickets().get(i).getTicketType();
             		int currentTicketAmount = getTickets().get(i).getAmount();
@@ -111,22 +152,31 @@ public class Main {
             		if (hasDiscount()) {
             			currentTicketPrice -= currentTicketAmount * 2;
             		}
-            		currentTicketsString += "" + currentTicketAmount + "x " + currentTicketType + " costing: £" + currentTicketPrice + (i == getTickets().size()-1 ? ". " : ", ");
+            		localTicketString += currentTicketAmount + "x " + currentTicketType + " costing: £" + currentTicketPrice + (i == getTickets().size()-1 ? ". " : ", ");
             	}
-            	System.out.println(currentTicketsString);
+            	System.out.println(localTicketString);
+            	System.out.println("Would you like anymore tickets? (Yes, No)");
+            	String moreTickets = reader.readLine();
+            
+            	if (moreTickets.equalsIgnoreCase("no"))
+            		stillOrdering = false;
+            	currentTicketsString = localTicketString;
             }
 		} catch (IOException ioe) {
             ioe.printStackTrace();
         }
-		
-		Standard standard = new Standard("Standard", 8);
-		OAP oap = new OAP("OAP", 6);
-		Student student = new Student("Student", 6);
-		Child child = new Child("Child", 4);
-		
-		System.out.println(standard.getPrice() + " " + oap.getPrice() + " " + student.getPrice() + " " + child.getPrice() + " ");
-		
-
+    	System.out.println(currentTicketsString.replace("Current Tickets: ", "Ticket Overview: "));
+    	double ticketPrice = 0;
+    	for (int i = 0; i < getTickets().size(); i++) {
+    		int currentTicketAmount = getTickets().get(i).getAmount();
+    		double currentTicketPrice = getTickets().get(i).getPrice() * currentTicketAmount;
+    		if (hasDiscount()) {
+    			currentTicketPrice -= currentTicketAmount * 2;
+    		}
+    		ticketPrice += currentTicketPrice;
+    	}
+    	
+    	System.out.println("Total amount due: £" + ticketPrice);
 	}
 
 }
